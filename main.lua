@@ -247,49 +247,49 @@ do
             end
         end});
 
-        -- [Config Box]
-        ConfigSection:AddBox({text = "Config Name", skipflag = true});
+        -- -- [Config Box]
+        -- ConfigSection:AddBox({text = "Config Name", skipflag = true});
 
-        -- [Config List]
-        ConfigSection:AddList({text = "Configs", skipflag = true, value = "", flag = "Config List", values = library:GetConfigs()});
+        -- -- [Config List]
+        -- ConfigSection:AddList({text = "Configs", skipflag = true, value = "", flag = "Config List", values = library:GetConfigs()});
 
-        -- [Create Button]
-        ConfigSection:AddButton({text = "Create", callback = function()
-            library:GetConfigs();
-            writefile(library.foldername .. "/" .. library.flags["Config Name"] .. library.fileext, "{}");
-            library.options["Config List"]:AddValue(library.flags["Config Name"]);
-        end});
+        -- -- [Create Button]
+        -- ConfigSection:AddButton({text = "Create", callback = function()
+        --     library:GetConfigs();
+        --     writefile(library.foldername .. "/" .. library.flags["Config Name"] .. library.fileext, "{}");
+        --     library.options["Config List"]:AddValue(library.flags["Config Name"]);
+        -- end});
 
-        -- [Save Button]
-        ConfigSection:AddButton({text = "Save", callback = function()
-            local r, g, b = library.round(library.flags["Menu Accent Color"]);
-            Warning.text = "Are you sure you want to save the current settings to config <font color='rgb(" .. r .. "," .. g .. "," .. b .. ")'>" .. library.flags["Config List"] .. "</font>?";
-            if Warning:Show() then
-                library:SaveConfig(library.flags["Config List"]);
-            end
-        end});
+        -- -- [Save Button]
+        -- ConfigSection:AddButton({text = "Save", callback = function()
+        --     local r, g, b = library.round(library.flags["Menu Accent Color"]);
+        --     Warning.text = "Are you sure you want to save the current settings to config <font color='rgb(" .. r .. "," .. g .. "," .. b .. ")'>" .. library.flags["Config List"] .. "</font>?";
+        --     if Warning:Show() then
+        --         library:SaveConfig(library.flags["Config List"]);
+        --     end
+        -- end});
 
-        -- [Load Button]
-        ConfigSection:AddButton({text = "Load", callback = function()
-            local r, g, b = library.round(library.flags["Menu Accent Color"]);
-            Warning.text = "Are you sure you want to load config <font color='rgb(" .. r .. "," .. g .. "," .. b .. ")'>" .. library.flags["Config List"] .. "</font>?";
-            if Warning:Show() then
-                library:LoadConfig(library.flags["Config List"]);
-            end
-        end});
+        -- -- [Load Button]
+        -- ConfigSection:AddButton({text = "Load", callback = function()
+        --     local r, g, b = library.round(library.flags["Menu Accent Color"]);
+        --     Warning.text = "Are you sure you want to load config <font color='rgb(" .. r .. "," .. g .. "," .. b .. ")'>" .. library.flags["Config List"] .. "</font>?";
+        --     if Warning:Show() then
+        --         library:LoadConfig(library.flags["Config List"]);
+        --     end
+        -- end});
 
-        -- [Delete Button]
-        ConfigSection:AddButton({text = "Delete", callback = function()
-            local r, g, b = library.round(library.flags["Menu Accent Color"]);
-            Warning.text = "Are you sure you want to delete then config <font color='rgb(" .. r .. "," .. g .. "," .. b .. ")'>" .. library.flags["Config List"] .. "</font>?";
-            if Warning:Show() then
-                local config = library.flags["Config List"];
-                if table.find(library:GetConfigs(), config) and isfile(library.foldername .. "/" .. config .. library.fileext) then
-                    library.options["Config List"]:RemoveValue(config);
-                    delfile(library.foldername .. "/" .. config .. library.fileext);
-                end
-            end
-        end});
+        -- -- [Delete Button]
+        -- ConfigSection:AddButton({text = "Delete", callback = function()
+        --     local r, g, b = library.round(library.flags["Menu Accent Color"]);
+        --     Warning.text = "Are you sure you want to delete the config <font color='rgb(" .. r .. "," .. g .. "," .. b .. ")'>" .. library.flags["Config List"] .. "</font>?";
+        --     if Warning:Show() then
+        --         local config = library.flags["Config List"];
+        --         if table.find(library:GetConfigs(), config) and isfile(library.foldername .. "/" .. config .. library.fileext) then
+        --             library.options["Config List"]:RemoveValue(config);
+        --             delfile(library.foldername .. "/" .. config .. library.fileext);
+        --         end
+        --     end
+        -- end});
 
         library:Init();
         library:selectTab(library.tabs[1]);
