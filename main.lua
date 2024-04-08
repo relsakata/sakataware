@@ -16,9 +16,11 @@ if library and getgenv().SakataWareLoaded then
 end
 
 local library = loadstring(game:HttpGet("https://github.com/relsakata/evade/raw/main/library.lua"))()
-do
-    if Gameame == "Evade" then
+
+if GameName == "Evade" then
+    do
         local CurrentTick = tick()
+
         getgenv().SakataWareLoaded = CurrentTick
         getgenv().SakataWare = {
             AutoFarm = {
@@ -33,14 +35,17 @@ do
             HideUser = false,
             Threads = {}
         }
+
         local script_flag = {
             Hiding = false,
             Reviving = false,
             Clover = false,
         }
+
         local Players = game.Players
         local LocalPlayer = Players.LocalPlayer
         local char = LocalPlayer.Character
+        local Action = "Hide"
         
         LocalPlayer.CharacterAdded:Connect(function(new)
             char = new
@@ -53,6 +58,7 @@ do
                 end
             end
         end
+
         getgenv().SakataWare.Threads[#SakataWare.Threads+1] = task.spawn(function()
             local old
             old = hookmetamethod(game,"__namecall", newcclosure(function(self,...)
@@ -63,6 +69,7 @@ do
                 end
                 return old(self,...)
             end))
+
             local Action = "None"
             local lastClover = tick()
             while task.wait() do
@@ -105,11 +112,14 @@ do
                 end
             end
         end)
+
+
         if getgenv().SakataWareLoaded~=CurrentTick then
             for i,v in getgenv().SakataWare.Threads do
                 v:Cancel()
             end
         end
+
         local HomeTab = library:AddTab("Home")
         local HomeColumn = HomeTab:AddColumn();
         local MainSection = HomeColumn:AddSection("Home")
@@ -118,20 +128,28 @@ do
             writefile("SakataWare/HideUser", "return false")
         end
         local HideUser = loadstring(readfile("SakataWare/HideUser"))()
+
         local Name
+
         if HideUser then
             Name = "Anonymous"
         else
             Name = game.Players.LocalPlayer.DisplayName
         end
+
         local HelloLabel = MainSection:AddLabel(`Hello, {Name}!`)
         local VersionLabel = MainSection:AddLabel(`Version, {dev and "DEV" or beta and "BETA "..Version or Version}!`)
+
         local MainTab = library:AddTab("Main")
         local MainColumn1 = MainTab:AddColumn();
         local AutoFarmSection = MainColumn1:AddSection("Main")
+
+
         local UiTable = {
             AutoFarm = {},
         };
+
+
         UiTable.AutoFarm.toggle = AutoFarmSection:AddToggle({
             default = false,
             text = "Toggle",
@@ -140,7 +158,9 @@ do
                 getgenv().SakataWare.AutoFarm.toggle = bool
             end
         })
+
         AutoFarmSection:AddDivider("Settings");
+
         UiTable.AutoFarm.autohide = AutoFarmSection:AddToggle({
             default = false,
             text = "Auto Hide",
@@ -149,6 +169,7 @@ do
                 getgenv().SakataWare.AutoFarm.autohide = bool
             end
         })
+
         -- UiTable.AutoFarm.autorevive = AutoFarmSection:AddToggle({
         --     default = false,
         --     text = "Auto Revive",
@@ -157,6 +178,7 @@ do
         --         getgenv().SakataWare.AutoFarm.autorevive = bool
         --     end
         -- })
+
         UiTable.AutoFarm.autoclover = AutoFarmSection:AddToggle({
             default = false,
             text = "Auto Clover",
@@ -165,6 +187,7 @@ do
                 getgenv().SakataWare.AutoFarm.autoclover = bool
             end
         })
+
         UiTable.AutoFarm.autorespawn = AutoFarmSection:AddToggle({
             default = false,
             text = "Auto Respawn",
@@ -173,6 +196,7 @@ do
                 getgenv().SakataWare.AutoFarm.autorespawn = bool
             end
         })
+
         local MiscSection = MainColumn1:AddSection("Misc")
         UiTable.Speed = MiscSection:AddToggle({
             default = false,
@@ -182,16 +206,20 @@ do
                 getgenv().SakataWare.Speed = bool
             end
         })
-        MiscSection:AddBox({text = "Speed Value", default = 1500, callback = function(value) getgenv().SakataWare.SpeedValue = value end});
+
+        MiscSection:AddBox({text = "Speed Value (Default=1500)", callback = function(value) getgenv().SakataWare.SpeedValue = value end});
+
         local SettingsTab = library:AddTab("Settings"); 
         local SettingsColumn = SettingsTab:AddColumn(); 
         local SettingsColumn2 = SettingsTab:AddColumn(); 
         local SettingSection = SettingsColumn:AddSection("Menu"); 
         local ConfigSection = SettingsColumn2:AddSection("Configs");
         local Warning = library:AddWarning({type = "confirm"});
+
         SettingSection:AddBind({text = "Open / Close", flag = "UI Toggle", nomouse = true, key = "End", callback = function()
             library:Close();
         end});
+
         SettingSection:AddButton({text = "Unload UI", callback = function()
             local r, g, b = library.round(library.flags["Menu Accent Color"]);
             Warning.text = "<font color='rgb(" .. r .. "," .. g .. "," .. b .. ")'>" .. 'Are you sure you wana unload the UI?' .. "</font>";
@@ -199,6 +227,7 @@ do
             library:Unload()
             end
         end});
+
         SettingSection:AddColor({text = "Accent Color", flag = "Menu Accent Color", color = Color3.fromRGB(88,133,198), callback = function(color)
             if library.currentTab then
                 library.currentTab.button.TextColor3 = color;
@@ -207,6 +236,7 @@ do
                 v[(v.ClassName == "TextLabel" and "TextColor3") or (v.ClassName == "ImageLabel" and "ImageColor3") or "BackgroundColor3"] = color;
             end
         end});
+
         -- [Background List]
         local backgroundlist = {
             Floral = "rbxassetid://5553946656",
@@ -214,12 +244,14 @@ do
             Circles = "rbxassetid://6071579801",
             Hearts = "rbxassetid://6073763717"
         };
+
         -- [Background List]
         local back = SettingSection:AddList({text = "Background", max = 4, flag = "background", values = {"Floral", "Flowers", "Circles", "Hearts"}, value = "Floral", callback = function(v)
             if library.main then
                 library.main.Image = backgroundlist[v];
             end
         end});
+
         -- [Background Color Picker]
         back:AddColor({flag = "backgroundcolor", color = Color3.new(), callback = function(color)
             if library.main then
@@ -238,14 +270,14 @@ do
             end
         end});
 
-        -- [Discord Button]
-        SettingSection:AddButton({text = "Discord", callback = function()
-            local r, g, b = library.round(library.flags["Menu Accent Color"]);
-            Warning.text = "<font color='rgb(" .. r .. "," .. g .. "," .. b .. ")'>" .. 'Discord invite copied to clip board!' .. "</font>";
-            if Warning:Show() then
-            setclipboard('discord.gg/none lmao')
-            end
-        end});
+        -- -- [Discord Button]
+        -- SettingSection:AddButton({text = "Discord", callback = function()
+        --     local r, g, b = library.round(library.flags["Menu Accent Color"]);
+        --     Warning.text = "<font color='rgb(" .. r .. "," .. g .. "," .. b .. ")'>" .. 'Discord invite copied to clip board!' .. "</font>";
+        --     if Warning:Show() then
+        --     setclipboard('')
+        --     end
+        -- end});
 
         -- -- [Config Box]
         -- ConfigSection:AddBox({text = "Config Name", skipflag = true});
@@ -281,7 +313,7 @@ do
         -- -- [Delete Button]
         -- ConfigSection:AddButton({text = "Delete", callback = function()
         --     local r, g, b = library.round(library.flags["Menu Accent Color"]);
-        --     Warning.text = "Are you sure you want to delete the config <font color='rgb(" .. r .. "," .. g .. "," .. b .. ")'>" .. library.flags["Config List"] .. "</font>?";
+        --     Warning.text = "Are you sure you want to delete then config <font color='rgb(" .. r .. "," .. g .. "," .. b .. ")'>" .. library.flags["Config List"] .. "</font>?";
         --     if Warning:Show() then
         --         local config = library.flags["Config List"];
         --         if table.find(library:GetConfigs(), config) and isfile(library.foldername .. "/" .. config .. library.fileext) then
