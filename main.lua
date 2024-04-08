@@ -1,5 +1,5 @@
-local dev = true
-local beta = false
+local dev = false
+local beta = true
 local Version = "0.0.1a"
 
 if game.PlaceId == 9872472334 then
