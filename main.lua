@@ -41,7 +41,6 @@ do
         local Players = game.Players
         local LocalPlayer = Players.LocalPlayer
         local char = LocalPlayer.Character
-        local Action = "Hide"
         
         LocalPlayer.CharacterAdded:Connect(function(new)
             char = new
