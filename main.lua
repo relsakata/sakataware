@@ -16,11 +16,9 @@ if library and getgenv().SakataWareLoaded then
 end
 
 local library = loadstring(game:HttpGet("https://github.com/relsakata/evade/raw/main/library.lua"))()
-
-if GameName == "Evade" then
-    do
+do
+    if Gameame == "Evade" then
         local CurrentTick = tick()
-
         getgenv().SakataWareLoaded = CurrentTick
         getgenv().SakataWare = {
             AutoFarm = {
@@ -35,13 +33,11 @@ if GameName == "Evade" then
             HideUser = false,
             Threads = {}
         }
-
         local script_flag = {
             Hiding = false,
             Reviving = false,
             Clover = false,
         }
-
         local Players = game.Players
         local LocalPlayer = Players.LocalPlayer
         local char = LocalPlayer.Character
@@ -58,7 +54,6 @@ if GameName == "Evade" then
                 end
             end
         end
-
         getgenv().SakataWare.Threads[#SakataWare.Threads+1] = task.spawn(function()
             local old
             old = hookmetamethod(game,"__namecall", newcclosure(function(self,...)
@@ -69,10 +64,10 @@ if GameName == "Evade" then
                 end
                 return old(self,...)
             end))
-
             local Action = "None"
             local lastClover = tick()
             while task.wait() do
+                if not char then repeat task.wait() until char end
                 LocalPlayer.Character:WaitForChild"HumanoidRootPart"
                 if getgenv().SakataWare.AutoFarm.toggle then
                     if getgenv().SakataWare.AutoFarm.autorespawn and (char and char:GetAttribute("Downed") == true or not char) then
@@ -111,14 +106,11 @@ if GameName == "Evade" then
                 end
             end
         end)
-
-
         if getgenv().SakataWareLoaded~=CurrentTick then
             for i,v in getgenv().SakataWare.Threads do
                 v:Cancel()
             end
         end
-
         local HomeTab = library:AddTab("Home")
         local HomeColumn = HomeTab:AddColumn();
         local MainSection = HomeColumn:AddSection("Home")
@@ -127,28 +119,20 @@ if GameName == "Evade" then
             writefile("SakataWare/HideUser", "return false")
         end
         local HideUser = loadstring(readfile("SakataWare/HideUser"))()
-
         local Name
-
         if HideUser then
             Name = "Anonymous"
         else
             Name = game.Players.LocalPlayer.DisplayName
         end
-
         local HelloLabel = MainSection:AddLabel(`Hello, {Name}!`)
         local VersionLabel = MainSection:AddLabel(`Version, {dev and "DEV" or beta and "BETA "..Version or Version}!`)
-
         local MainTab = library:AddTab("Main")
         local MainColumn1 = MainTab:AddColumn();
         local AutoFarmSection = MainColumn1:AddSection("Main")
-
-
         local UiTable = {
             AutoFarm = {},
         };
-
-
         UiTable.AutoFarm.toggle = AutoFarmSection:AddToggle({
             default = false,
             text = "Toggle",
@@ -157,9 +141,7 @@ if GameName == "Evade" then
                 getgenv().SakataWare.AutoFarm.toggle = bool
             end
         })
-
         AutoFarmSection:AddDivider("Settings");
-
         UiTable.AutoFarm.autohide = AutoFarmSection:AddToggle({
             default = false,
             text = "Auto Hide",
@@ -168,7 +150,6 @@ if GameName == "Evade" then
                 getgenv().SakataWare.AutoFarm.autohide = bool
             end
         })
-
         -- UiTable.AutoFarm.autorevive = AutoFarmSection:AddToggle({
         --     default = false,
         --     text = "Auto Revive",
@@ -177,7 +158,6 @@ if GameName == "Evade" then
         --         getgenv().SakataWare.AutoFarm.autorevive = bool
         --     end
         -- })
-
         UiTable.AutoFarm.autoclover = AutoFarmSection:AddToggle({
             default = false,
             text = "Auto Clover",
@@ -186,7 +166,6 @@ if GameName == "Evade" then
                 getgenv().SakataWare.AutoFarm.autoclover = bool
             end
         })
-
         UiTable.AutoFarm.autorespawn = AutoFarmSection:AddToggle({
             default = false,
             text = "Auto Respawn",
@@ -195,7 +174,6 @@ if GameName == "Evade" then
                 getgenv().SakataWare.AutoFarm.autorespawn = bool
             end
         })
-
         local MiscSection = MainColumn1:AddSection("Misc")
         UiTable.Speed = MiscSection:AddToggle({
             default = false,
@@ -205,20 +183,16 @@ if GameName == "Evade" then
                 getgenv().SakataWare.Speed = bool
             end
         })
-
         MiscSection:AddBox({text = "1500", callback = function(value) getgenv().SakataWare.SpeedValue = value end});
-
         local SettingsTab = library:AddTab("Settings"); 
         local SettingsColumn = SettingsTab:AddColumn(); 
         local SettingsColumn2 = SettingsTab:AddColumn(); 
         local SettingSection = SettingsColumn:AddSection("Menu"); 
         local ConfigSection = SettingsColumn2:AddSection("Configs");
         local Warning = library:AddWarning({type = "confirm"});
-
         SettingSection:AddBind({text = "Open / Close", flag = "UI Toggle", nomouse = true, key = "End", callback = function()
             library:Close();
         end});
-
         SettingSection:AddButton({text = "Unload UI", callback = function()
             local r, g, b = library.round(library.flags["Menu Accent Color"]);
             Warning.text = "<font color='rgb(" .. r .. "," .. g .. "," .. b .. ")'>" .. 'Are you sure you wana unload the UI?' .. "</font>";
@@ -226,7 +200,6 @@ if GameName == "Evade" then
             library:Unload()
             end
         end});
-
         SettingSection:AddColor({text = "Accent Color", flag = "Menu Accent Color", color = Color3.fromRGB(88,133,198), callback = function(color)
             if library.currentTab then
                 library.currentTab.button.TextColor3 = color;
@@ -235,7 +208,6 @@ if GameName == "Evade" then
                 v[(v.ClassName == "TextLabel" and "TextColor3") or (v.ClassName == "ImageLabel" and "ImageColor3") or "BackgroundColor3"] = color;
             end
         end});
-
         -- [Background List]
         local backgroundlist = {
             Floral = "rbxassetid://5553946656",
@@ -243,14 +215,12 @@ if GameName == "Evade" then
             Circles = "rbxassetid://6071579801",
             Hearts = "rbxassetid://6073763717"
         };
-
         -- [Background List]
         local back = SettingSection:AddList({text = "Background", max = 4, flag = "background", values = {"Floral", "Flowers", "Circles", "Hearts"}, value = "Floral", callback = function(v)
             if library.main then
                 library.main.Image = backgroundlist[v];
             end
         end});
-
         -- [Background Color Picker]
         back:AddColor({flag = "backgroundcolor", color = Color3.new(), callback = function(color)
             if library.main then
@@ -274,7 +244,7 @@ if GameName == "Evade" then
             local r, g, b = library.round(library.flags["Menu Accent Color"]);
             Warning.text = "<font color='rgb(" .. r .. "," .. g .. "," .. b .. ")'>" .. 'Discord invite copied to clip board!' .. "</font>";
             if Warning:Show() then
-            setclipboard('discord.gg/awakenkn-gg')
+            setclipboard('discord.gg/none lmao')
             end
         end});
 
