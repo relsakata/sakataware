@@ -182,7 +182,7 @@ do
                 getgenv().SakataWare.Speed = bool
             end
         })
-        MiscSection:AddBox({text = "1500", callback = function(value) getgenv().SakataWare.SpeedValue = value end});
+        MiscSection:AddBox({text = "Speed Value", default = 1500, callback = function(value) getgenv().SakataWare.SpeedValue = value end});
         local SettingsTab = library:AddTab("Settings"); 
         local SettingsColumn = SettingsTab:AddColumn(); 
         local SettingsColumn2 = SettingsTab:AddColumn(); 
