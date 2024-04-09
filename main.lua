@@ -2,8 +2,8 @@ if not game:IsLoaded() then
     game.Loaded:Wait()
 end
 
-local dev = false
-local beta = true
+local dev = true
+local beta = false
 local Version = "1.1.0b"
 
 if game.PlaceId == 9872472334 then
@@ -126,6 +126,11 @@ if GameName == "Evade" then
             end
         end
 
+        local UiTable = {
+            AutoFarm = {},
+        };
+
+
         local HomeTab = library:AddTab("Home")
         local HomeColumn = HomeTab:AddColumn();
         local MainSection = HomeColumn:AddSection("Home")
@@ -133,6 +138,7 @@ if GameName == "Evade" then
         if not isfile("SakataWare/HideUser") then
             writefile("SakataWare/HideUser", "return false")
         end
+        
         local HideUser = loadstring(readfile("SakataWare/HideUser"))()
 
         local Name
@@ -146,7 +152,7 @@ if GameName == "Evade" then
         local HelloLabel = MainSection:AddLabel(`Hello, {Name}!`)
         local VersionLabel = MainSection:AddLabel(`Version, {dev and "DEV" or beta and "BETA "..Version or Version}!`)
 
-        UiTable.HideUser = AutoFarmSection:AddToggle({
+        UiTable.HideUser = MainSection:AddToggle({
             default = false,
             text = "Hide User from Home Page",
             flag = "HideUser",
@@ -164,11 +170,6 @@ if GameName == "Evade" then
         local MainTab = library:AddTab("Main")
         local MainColumn1 = MainTab:AddColumn();
         local AutoFarmSection = MainColumn1:AddSection("Main")
-
-
-        local UiTable = {
-            AutoFarm = {},
-        };
 
 
         UiTable.AutoFarm.toggle = AutoFarmSection:AddToggle({
