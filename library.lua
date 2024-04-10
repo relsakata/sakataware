@@ -9,7 +9,7 @@ function startLibrary(TitleNameFROnGod, FolderNameFR)
 		print('UNLOAD NIGGER')
 	end
 
-	local library = {design = getgenv().design == "kali" and "kali", tabs = {}, draggable = true, flags = {}, title = TitleNameFROnGod, open = false, mousestate = inputService.MouseIconEnabled,popup = nil, instances = {}, connections = {}, options = {}, notifications = {}, tabSize = 0, theme = {}, foldername = "SakataWare", fileext = ".json"}
+	local library = {design = getgenv().design == "kali" and "kali", tabs = {}, draggable = true, flags = {}, title = TitleNameFROnGod, open = false, mousestate = inputService.MouseIconEnabled,popup = nil, instances = {}, connections = {}, options = {}, notifications = {}, tabSize = 0, theme = {}, foldername = FolderNameFR, fileext = ".json"}
 	getgenv().library = library
 
 	local dragging, dragInput, dragStart, startPos, dragObject
@@ -111,17 +111,17 @@ function startLibrary(TitleNameFROnGod, FolderNameFR)
 	function library:SaveConfig(config)
 		local Config = {}
 		if table.find(self:GetConfigs(), config) then
-			Config = pcall(function() return game:GetService"HttpService":JSONDecode(readfile(self.foldername .. "/" .. config .. self.fileext)) end)
+			Config = game:GetService"HttpService":JSONDecode(readfile(self.foldername .. "/" .. config .. self.fileext))
 		end
 		for _, option in next, self.options do
 			if option.type ~= "button" and option.flag and not option.skipflag then
 				if option.type == "toggle" then
 					Config[option.flag] = option.state and 1 or 0
 				elseif option.type == "color" then
-					Config[option.flag] = {option.color.r, option.color.g, option.color.b}
-					if option.trans then
-						Config[option.flag .. " Transparency"] = option.trans
-					end
+					-- Config[option.flag] = {option.color.r, option.color.g, option.color.b}
+					-- if option.trans then
+					-- 	Config[option.flag .. " Transparency"] = option.trans
+					-- end
 				elseif option.type == "bind" then
 					if option.key ~= "none" then
 						Config[option.flag] = option.key
@@ -2631,23 +2631,6 @@ function startLibrary(TitleNameFROnGod, FolderNameFR)
 				column.main.Visible = true
 			end
 		end
-
-		spawn(function()
-			while library do
-				wait(1)
-				local Configs = self:GetConfigs()
-				for _, config in next, Configs do
-					if not table.find(self.options["Config List"].values, config) then
-						self.options["Config List"]:AddValue(config)
-					end
-				end
-				for _, config in next, self.options["Config List"].values do
-					if not table.find(Configs, config) then
-						self.options["Config List"]:RemoveValue(config)
-					end
-				end
-			end
-		end)
 
 		for _, tab in next, self.tabs do
 			if tab.canInit then
