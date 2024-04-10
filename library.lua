@@ -1,14 +1,15 @@
 --Services
-function startLibrary(Name, Folder)
+function startLibrary(TitleNameFROnGod, FolderNameFR)
 	getgenv().runService = game:GetService"RunService"
 	getgenv().textService = game:GetService"TextService"
 	getgenv().inputService = game:GetService"UserInputService"
 	getgenv().tweenService = game:GetService"TweenService"
 	if getgenv().library then
 		getgenv().library:Unload()
+		print('UNLOAD NIGGER')
 	end
 
-	local library = {design = getgenv().design == "kali" and "kali", tabs = {}, draggable = true, flags = {}, title = Name, open = false, mousestate = inputService.MouseIconEnabled,popup = nil, instances = {}, connections = {}, options = {}, notifications = {}, tabSize = 0, theme = {}, foldername = "SakataWare", fileext = ".json"}
+	local library = {design = getgenv().design == "kali" and "kali", tabs = {}, draggable = true, flags = {}, title = TitleNameFROnGod, open = false, mousestate = inputService.MouseIconEnabled,popup = nil, instances = {}, connections = {}, options = {}, notifications = {}, tabSize = 0, theme = {}, foldername = "SakataWare", fileext = ".json"}
 	getgenv().library = library
 
 	local dragging, dragInput, dragStart, startPos, dragObject
@@ -65,6 +66,17 @@ function startLibrary(Name, Folder)
 	end
 
 	function library:Unload()
+		for _, c in next, self.connections do
+			c:Disconnect()
+		end
+		for _, i in next, self.instances do
+			if i.method then
+				pcall(function() i.object:Remove() end)
+			else
+				i.object:Destroy()
+			end
+		end
+
 		library = nil
 		getgenv().library = nil
 	end
