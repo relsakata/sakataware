@@ -1741,13 +1741,16 @@ function library:AddTab(title, pos)
 				option.canInit = true
 				table.insert(self.options, option)
                 local currLabel
+				print(1)
 				if library.hasInit and self.hasInit then
+					print(2)
 					currLabel = library.createLabel(option, self.content)
 					print(currLabel)
 					if type(currLabel) == "table" then
 						table.foreach(currLabel, print)
 					end
 				else
+					print(3)
 					option.Init = library.createLabel
 				end
 
