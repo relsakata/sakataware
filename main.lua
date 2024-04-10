@@ -15,7 +15,7 @@ if library and getgenv().SakataWareLoaded then
     getgenv().SakataWareLoaded = nil
 end
 
-local library = loadstring(readfile("lib.lua"))()(`SakataWare | {game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name}`, `SakataWare/{game.PlaceId}`)
+local library = loadstring(game:HttpGet("https://github.com/relsakata/sakataware/raw/main/library.lua"))()(`SakataWare | {game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name}`, `SakataWare/{game.PlaceId}`)
 
 local UiTable = {
     AutoFarm = {},
