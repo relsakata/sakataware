@@ -6,12 +6,6 @@ local dev = true
 local beta = false
 local Version = "1.1.0b"
 
-if game.PlaceId == 9872472334 then
-    GameName = "Evade"
-elseif game.PlaceId == 71315343 then
-    GameName = "Dragon Ball Rage"
-end
-
 if not isfolder("SakataWare") then
     makefolder("SakataWare")
 end
@@ -21,10 +15,18 @@ if library and getgenv().SakataWareLoaded then
     getgenv().SakataWareLoaded = nil
 end
 
-local library = loadstring(game:HttpGet("https://github.com/relsakata/evade/raw/main/library.lua"))()
+local library = loadstring(readfile("lib.lua"))()(`SakataWare | {game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name}`, `SakataWare/{game.PlaceId}`)
 
-if GameName == "Evade" then
+local UiTable = {
+    AutoFarm = {},
+};
+
+if game.PlaceId == 9872472334 then
     do
+        if not isfolder("SakataWare/"..game.PlaceId) then
+            makefolder("SakataWare/"..game.PlaceId)
+        end
+
         local CurrentTick = tick()
 
         getgenv().SakataWareLoaded = CurrentTick
@@ -41,6 +43,13 @@ if GameName == "Evade" then
             HideUser = false,
             Threads = {}
         }
+
+        for i,v in getgenv().SakataWare do
+            if i == "Threads" then continue end
+            if typeof(v) == "table" then
+                UiTable[i] = {}
+            end
+        end
 
         local script_flag = {
             Hiding = false,
@@ -126,11 +135,7 @@ if GameName == "Evade" then
             end
         end
 
-        local UiTable = {
-            AutoFarm = {},
-        };
-
-
+        library:Init();
         local HomeTab = library:AddTab("Home")
         local HomeColumn = HomeTab:AddColumn();
         local MainSection = HomeColumn:AddSection("Home")
@@ -149,20 +154,24 @@ if GameName == "Evade" then
             Name = game.Players.LocalPlayer.DisplayName
         end
 
+
         local HelloLabel = MainSection:AddLabel(`Hello, {Name}!`)
+        print("--START")
+        table.foreach(HelloLabel, print)
+        print("--END")
         local VersionLabel = MainSection:AddLabel(`Version, {dev and "DEV" or beta and "BETA "..Version or Version}!`)
 
         UiTable.HideUser = MainSection:AddToggle({
             default = false,
             text = "Hide User from Home Page",
-            flag = "HideUser",
+            skipflag = true,
             callback = function(bool)
                 if bool then
                     writefile("SakataWare/HideUser", "return true")
-                    HelloLabel:Update("Anonymous")
+                    HelloLabel:Update("Hello, Anonymous!")
                 else
                     writefile("SakataWare/HideUser", "return false")
-                    HelloLabel:Update(game.Players.LocalPlayer.DisplayName)
+                    HelloLabel:Update("Hello, "..game.Players.LocalPlayer.DisplayName.."!")
                 end
             end
         })    
@@ -175,7 +184,7 @@ if GameName == "Evade" then
         UiTable.AutoFarm.toggle = AutoFarmSection:AddToggle({
             default = false,
             text = "Toggle",
-            flag = "AutoFarmEnabled",
+            skipflag = true,
             callback = function(bool)
                 getgenv().SakataWare.AutoFarm.toggle = bool
             end
@@ -186,7 +195,7 @@ if GameName == "Evade" then
         UiTable.AutoFarm.autohide = AutoFarmSection:AddToggle({
             default = false,
             text = "Auto Hide",
-            flag = "Hiding",
+            skipflag = true,
             callback = function(bool)
                 getgenv().SakataWare.AutoFarm.autohide = bool
             end
@@ -229,7 +238,107 @@ if GameName == "Evade" then
             end
         })
 
-        MiscSection:AddBox({text = "Speed Value (Default=1500)", callback = function(value) getgenv().SakataWare.SpeedValue = value end});
+        UiTable.SpeedValue = MiscSection:AddBox({text = "Speed Value (Default=1500)", flag = "SpeedValue", callback = function(value) getgenv().SakataWare.SpeedValue = value end});
+    end
+elseif game.PlaceId == 71315343 then
+    do
+        if not isfolder("SakataWare/"..game.PlaceId) then
+            makefolder("SakataWare/"..game.PlaceId)
+        end
+        local CurrentTick = tick()
+        getgenv().SakataWareLoaded = CurrentTick
+        local Players = game.Players
+        local LocalPlayer = Players.LocalPlayer
+        if not LocalPlayer.Character then
+            LocalPlayer.CharacterAdded:Wait()
+        end
+        local Character = LocalPlayer.Character
+
+        getgenv().SakataWare = {
+            Threads = {},
+            AutoDB = false,
+            AutoRebirth = false,
+        }
+
+        for i,v in getgenv().SakataWare do
+            if i == "Threads" then continue end
+            if typeof(v) == "table" then
+                UiTable[i] = {}
+            end
+        end
+
+        local Threads = {}
+
+        if getgenv().SakataWareLoaded~=CurrentTick then
+            for i,v in Threads do
+                v:Cancel()
+            end
+        end
+
+        local HomeTab = library:AddTab("Home")
+        local HomeColumn = HomeTab:AddColumn();
+        local MainSection = HomeColumn:AddSection("Home")
+        MainSection:AddDivider("Main")
+        if not isfile("SakataWare/HideUser") then
+            writefile("SakataWare/HideUser", "return false")
+        end
+        local HideUser = loadstring(readfile("SakataWare/HideUser"))()
+
+        local Name
+
+        if HideUser then
+            Name = "Anonymous"
+        else
+            Name = game.Players.LocalPlayer.DisplayName
+        end
+
+        local HelloLabel = MainSection:AddLabel(`Hello, {Name}!`)
+        local VersionLabel = MainSection:AddLabel(`Version, {dev and "DEV" or beta and "BETA "..Version or Version}!`)
+        
+        UiTable.HideUser = MainSection:AddToggle({
+            default = false,
+            text = "Hide User from Home Page",
+            flag = "HideUser",
+            callback = function(bool)
+                if bool then
+                    writefile("SakataWare/HideUser", "return true")
+                    HelloLabel:Update("Anonymous")
+                else
+                    writefile("SakataWare/HideUser", "return false")
+                    HelloLabel:Update(LocalPlayer.DisplayName)
+                end
+            end
+        })
+
+        local MainTab = library:AddTab("Main")
+        local MainColumn1 = MainTab:AddColumn();
+        local AutoFarmSection = MainColumn1:AddSection("Main")
+
+
+        local UiTable = {
+            AutoFarm = {},
+        };
+
+
+        UiTable.AutoDB = AutoFarmSection:AddToggle({
+            default = false,
+            text = "Auto Dragon Ball Server Hop",
+            flag = "DBToggle",
+            callback = function(bool)
+                getgenv().SakataWare.AutoDB = bool
+            end
+        })
+
+        AutoFarmSection:AddDivider("Settings");
+
+        UiTable.AutoZenkai = AutoFarmSection:AddToggle({
+            default = false,
+            text = "Auto Zenkai (Use with DB)",
+            flag = "Zenkai",
+            callback = function(bool)
+                getgenv().SakataWare.AutoRebirth = bool
+            end
+        })
 
         local SettingsTab = library:AddTab("Settings"); 
         local SettingsColumn = SettingsTab:AddColumn(); 
@@ -347,304 +456,209 @@ if GameName == "Evade" then
 
         library:Init();
         library:selectTab(library.tabs[1]);
-    end
-elseif GameName == "Dragon Ball Rage" then
-    local CurrentTick = tick()
-    getgenv().SakataWareLoaded = CurrentTick
-    local Players = game.Players
-    local LocalPlayer = Players.LocalPlayer
-    local Character = LocalPlayer.Character
 
-    getgenv().SakataWare = {
-        Threads = {},
-        AutoDB = false,
-        AutoRebirth = false,
-    }
 
-    local UiTable = {
 
-    }
-
-    local Threads = {}
-
-    if getgenv().SakataWareLoaded~=CurrentTick then
-        for i,v in Threads do
-            v:Cancel()
+        local JobIds = {}
+        local nextPageCursor
+        if not isfile("dbr-shop.json") then
+            writefile("dbr-shop.json", game:GetService("HttpService"):JSONEncode(JobIds))
         end
-    end
 
-    local HomeTab = library:AddTab("Home")
-    local HomeColumn = HomeTab:AddColumn();
-    local MainSection = HomeColumn:AddSection("Home")
-    MainSection:AddDivider("Main")
-    if not isfile("SakataWare/HideUser") then
-        writefile("SakataWare/HideUser", "return false")
-    end
-    local HideUser = loadstring(readfile("SakataWare/HideUser"))()
+        local JobIds = game:GetService("HttpService"):JSONDecode(readfile("dbr-shop.json"))
 
-    local Name
-
-    if HideUser then
-        Name = "Anonymous"
-    else
-        Name = game.Players.LocalPlayer.DisplayName
-    end
-
-    local HelloLabel = MainSection:AddLabel(`Hello, {Name}!`)
-    local VersionLabel = MainSection:AddLabel(`Version, {dev and "DEV" or beta and "BETA "..Version or Version}!`)
-    
-    UiTable.HideUser = MainSection:AddToggle({
-        default = false,
-        text = "Hide User from Home Page",
-        flag = "HideUser",
-        callback = function(bool)
-            if bool then
-                writefile("SakataWare/HideUser", "return true")
-                HelloLabel:Update("Anonymous")
+        local function ServerHop()
+            local Body;
+            if not nextPageCursor then
+                Body = game:GetService("HttpService"):JSONDecode(http_request({ Url = 'https://games.roblox.com/v1/games/' .. game.placeId .. '/servers/Public?sortOrder=Asc&limit=100', Method = "GET"}).Body)
             else
-                writefile("SakataWare/HideUser", "return false")
-                HelloLabel:Update(LocalPlayer.DisplayName)
+                Body = game:GetService("HttpService"):JSONDecode(http_request({ Url = 'https://games.roblox.com/v1/games/' .. game.placeId .. '/servers/Public?sortOrder=Asc&limit=100&cursor=' .. nextPageCursor, Method = "GET"}).Body)
             end
-        end
-    })
-
-    local MainTab = library:AddTab("Main")
-    local MainColumn1 = MainTab:AddColumn();
-    local AutoFarmSection = MainColumn1:AddSection("Main")
-
-
-    local UiTable = {
-        AutoFarm = {},
-    };
-
-
-    UiTable.AutoDB = AutoFarmSection:AddToggle({
-        default = false,
-        text = "Auto Dragon Ball Server Hop",
-        flag = "DBToggle",
-        callback = function(bool)
-            getgenv().SakataWare.AutoDB = bool
-        end
-    })
-
-    AutoFarmSection:AddDivider("Settings");
-
-    UiTable.AutoZenkai = AutoFarmSection:AddToggle({
-        default = false,
-        text = "Auto Zenkai (Use with DB)",
-        flag = "Zenkai",
-        callback = function(bool)
-            getgenv().SakataWare.AutoRebirth = bool
-        end
-    })
-
-    local SettingsTab = library:AddTab("Settings"); 
-    local SettingsColumn = SettingsTab:AddColumn(); 
-    local SettingsColumn2 = SettingsTab:AddColumn(); 
-    local SettingSection = SettingsColumn:AddSection("Menu"); 
-    local ConfigSection = SettingsColumn2:AddSection("Configs");
-    local Warning = library:AddWarning({type = "confirm"});
-
-    SettingSection:AddBind({text = "Open / Close", flag = "UI Toggle", nomouse = true, key = "End", callback = function()
-        library:Close();
-    end});
-
-    SettingSection:AddButton({text = "Unload UI", callback = function()
-        local r, g, b = library.round(library.flags["Menu Accent Color"]);
-        Warning.text = "<font color='rgb(" .. r .. "," .. g .. "," .. b .. ")'>" .. 'Are you sure you wana unload the UI?' .. "</font>";
-        if Warning:Show() then
-        library:Unload()
-        end
-    end});
-
-    SettingSection:AddColor({text = "Accent Color", flag = "Menu Accent Color", color = Color3.fromRGB(88,133,198), callback = function(color)
-        if library.currentTab then
-            library.currentTab.button.TextColor3 = color;
-        end
-        for i,v in pairs(library.theme) do
-            v[(v.ClassName == "TextLabel" and "TextColor3") or (v.ClassName == "ImageLabel" and "ImageColor3") or "BackgroundColor3"] = color;
-        end
-    end});
-
-    -- [Background List]
-    local backgroundlist = {
-        Floral = "rbxassetid://5553946656",
-        Flowers = "rbxassetid://6071575925",
-        Circles = "rbxassetid://6071579801",
-        Hearts = "rbxassetid://6073763717"
-    };
-
-    -- [Background List]
-    local back = SettingSection:AddList({text = "Background", max = 4, flag = "background", values = {"Floral", "Flowers", "Circles", "Hearts"}, value = "Floral", callback = function(v)
-        if library.main then
-            library.main.Image = backgroundlist[v];
-        end
-    end});
-
-    -- [Background Color Picker]
-    back:AddColor({flag = "backgroundcolor", color = Color3.new(), callback = function(color)
-        if library.main then
-            library.main.ImageColor3 = Color or Color3.fromRGB(37,38,38)
-        end
-    end, trans = 1, calltrans = function(trans)
-        if library.main then
-            library.main.ImageTransparency = 1 - trans;
-        end
-    end});
-
-    -- [Tile Size Slider]
-    SettingSection:AddSlider({text = "Tile Size", min = 50, max = 500, value = 50, callback = function(size)
-        if library.main then
-            library.main.TileSize = UDim2.new(0, size, 0, size);
-        end
-    end});
-
-    -- -- [Discord Button]
-    -- SettingSection:AddButton({text = "Discord", callback = function()
-    --     local r, g, b = library.round(library.flags["Menu Accent Color"]);
-    --     Warning.text = "<font color='rgb(" .. r .. "," .. g .. "," .. b .. ")'>" .. 'Discord invite copied to clip board!' .. "</font>";
-    --     if Warning:Show() then
-    --     setclipboard('')
-    --     end
-    -- end});
-
-    -- -- [Config Box]
-    -- ConfigSection:AddBox({text = "Config Name", skipflag = true});
-
-    -- -- [Config List]
-    -- ConfigSection:AddList({text = "Configs", skipflag = true, value = "", flag = "Config List", values = library:GetConfigs()});
-
-    -- -- [Create Button]
-    -- ConfigSection:AddButton({text = "Create", callback = function()
-    --     library:GetConfigs();
-    --     writefile(library.foldername .. "/" .. library.flags["Config Name"] .. library.fileext, "{}");
-    --     library.options["Config List"]:AddValue(library.flags["Config Name"]);
-    -- end});
-
-    -- -- [Save Button]
-    -- ConfigSection:AddButton({text = "Save", callback = function()
-    --     local r, g, b = library.round(library.flags["Menu Accent Color"]);
-    --     Warning.text = "Are you sure you want to save the current settings to config <font color='rgb(" .. r .. "," .. g .. "," .. b .. ")'>" .. library.flags["Config List"] .. "</font>?";
-    --     if Warning:Show() then
-    --         library:SaveConfig(library.flags["Config List"]);
-    --     end
-    -- end});
-
-    -- -- [Load Button]
-    -- ConfigSection:AddButton({text = "Load", callback = function()
-    --     local r, g, b = library.round(library.flags["Menu Accent Color"]);
-    --     Warning.text = "Are you sure you want to load config <font color='rgb(" .. r .. "," .. g .. "," .. b .. ")'>" .. library.flags["Config List"] .. "</font>?";
-    --     if Warning:Show() then
-    --         library:LoadConfig(library.flags["Config List"]);
-    --     end
-    -- end});
-
-    -- -- [Delete Button]
-    -- ConfigSection:AddButton({text = "Delete", callback = function()
-    --     local r, g, b = library.round(library.flags["Menu Accent Color"]);
-    --     Warning.text = "Are you sure you want to delete then config <font color='rgb(" .. r .. "," .. g .. "," .. b .. ")'>" .. library.flags["Config List"] .. "</font>?";
-    --     if Warning:Show() then
-    --         local config = library.flags["Config List"];
-    --         if table.find(library:GetConfigs(), config) and isfile(library.foldername .. "/" .. config .. library.fileext) then
-    --             library.options["Config List"]:RemoveValue(config);
-    --             delfile(library.foldername .. "/" .. config .. library.fileext);
-    --         end
-    --     end
-    -- end});
-
-    library:Init();
-    library:selectTab(library.tabs[1]);
-
-
-
-    local JobIds = {}
-    local nextPageCursor
-    if not isfile("dbr-shop.json") then
-        writefile("dbr-shop.json", game:GetService("HttpService"):JSONEncode(JobIds))
-    end
-
-    local JobIds = game:GetService("HttpService"):JSONDecode(readfile("dbr-shop.json"))
-
-    local function ServerHop()
-        local Body;
-        if not nextPageCursor then
-            Body = game:GetService("HttpService"):JSONDecode(http_request({ Url = 'https://games.roblox.com/v1/games/' .. game.placeId .. '/servers/Public?sortOrder=Asc&limit=100', Method = "GET"}).Body)
-        else
-            Body = game:GetService("HttpService"):JSONDecode(http_request({ Url = 'https://games.roblox.com/v1/games/' .. game.placeId .. '/servers/Public?sortOrder=Asc&limit=100&cursor=' .. nextPageCursor, Method = "GET"}).Body)
-        end
-        local ID = ""
-        if Body.nextPageCursor and Body.nextPageCursor ~= "null" and Body.nextPageCursor ~= nil then
-            nextPageCursor = Body.nextPageCursor
-        end
-        local num = 0;
-        for i,v in pairs(Body.data) do
-            ID = v.id
-            if tonumber(v.maxPlayers) > tonumber(v.playing) then
-                if JobIds[ID] then
-                    if tick() - JobIds[ID] >= 600 then
-                        JobIds[ID] = nil
-                    elseif i ~= #Body.data then
-                        continue
-                    else
-                        xpcall(ServerHop, warn)
+            local ID = ""
+            if Body.nextPageCursor and Body.nextPageCursor ~= "null" and Body.nextPageCursor ~= nil then
+                nextPageCursor = Body.nextPageCursor
+            end
+            local num = 0;
+            for i,v in pairs(Body.data) do
+                ID = v.id
+                if tonumber(v.maxPlayers) > tonumber(v.playing) then
+                    if JobIds[ID] then
+                        if tick() - JobIds[ID] >= 600 then
+                            JobIds[ID] = nil
+                        elseif i ~= #Body.data then
+                            continue
+                        else
+                            xpcall(ServerHop, warn)
+                        end
                     end
+                    JobIds[ID] = tick()
+                    writefile("dbr-shop.json", game:GetService("HttpService"):JSONEncode(JobIds))
+                    repeat game:GetService("TeleportService"):TeleportToPlaceInstance(game.placeId, ID) task.wait() until nil
                 end
-                JobIds[ID] = tick()
-                writefile("dbr-shop.json", game:GetService("HttpService"):JSONEncode(JobIds))
-                repeat game:GetService("TeleportService"):TeleportToPlaceInstance(game.placeId, ID) task.wait() until nil
             end
         end
-    end
 
-    function CollectDB()
-        for i,v in workspace.Map:GetChildren() do
-            if v:FindFirstChild("Main") then
-                Character.HumanoidRootPart.CFrame = CFrame.new(v.Main.Position)
-                task.wait(.5)
-                fireproximityprompt(v.Main.Attachment.ProximityPrompt)
-                task.wait(.5)
+        function CollectDB()
+            for i,v in workspace.Map:GetChildren() do
+                if v:FindFirstChild("Main") then
+                    Character.HumanoidRootPart.CFrame = CFrame.new(v.Main.Position)
+                    task.wait(.5)
+                    fireproximityprompt(v.Main.Attachment.ProximityPrompt)
+                    task.wait(.5)
+                end
             end
         end
-    end
 
-    function Wish()
-        if require(game:GetService("ReplicatedStorage")["_replicationFolder"].DragonBallUtils).PlayerHasAllDragonBalls(LocalPlayer) then
-            Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.Pedestal.Center.Position)
-            task.wait(.5)
-            fireproximityprompt(workspace.Map.Pedestal.Center.Attachment.ProximityPrompt)
-            task.wait(.5)
-            firesignal(LocalPlayer.PlayerGui.Wish.Wishes.List.ZenkaiBoost.Button.MouseButton1Click)
-            task.wait(.5)
-            firesignal(LocalPlayer.PlayerGui.Wish.Accept.MouseButton1Click)
+        function Wish()
+            if require(game:GetService("ReplicatedStorage")["_replicationFolder"].DragonBallUtils).PlayerHasAllDragonBalls(LocalPlayer) then
+                Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.Pedestal.Center.Position)
+                task.wait(.5)
+                fireproximityprompt(workspace.Map.Pedestal.Center.Attachment.ProximityPrompt)
+                task.wait(.5)
+                firesignal(LocalPlayer.PlayerGui.Wish.Wishes.List.ZenkaiBoost.Button.MouseButton1Click)
+                task.wait(.5)
+                firesignal(LocalPlayer.PlayerGui.Wish.Accept.MouseButton1Click)
+            end
         end
-    end
 
-    if isfile("SakataWare/autoload.json") then
-        getgenv().SakataWare = game:GetService("HttpService"):JSONDecode(readfile("SakataWare/autoload.json"))
-        getgenv().SakataWare.Threads = {}
-    end
+        if isfile("SakataWare/autoload.json") then
+            getgenv().SakataWare = game:GetService("HttpService"):JSONDecode(readfile("SakataWare/autoload.json"))
+            getgenv().SakataWare.Threads = {}
+        end
 
-    Threads[#Threads+1] = task.spawn(function()
-        while task.wait(1) do
-            if getgenv().SakataWare.AutoDB then
-                CollectDB()
+        Threads[#Threads+1] = task.spawn(function()
+            while task.wait(1) do
+                if getgenv().SakataWare.AutoDB then
+                    CollectDB()
+                    if getgenv().SakataWare.AutoRebirth then
+                        Wish()
+                    end
+                    if getgenv().SakataWare.AutoDB then
+                        writefile("SakataWare/autoload.json", game:GetService("HttpService"):JSONEncode(getgenv().SakataWare))
+                    end
+                    
+                    xpcall(ServerHop, warn)
+                end
+            end
+        end)
+
+        Threads[#Threads+1] = task.spawn(function()
+            while task.wait(1) do
                 if getgenv().SakataWare.AutoRebirth then
                     Wish()
                 end
-                if getgenv().SakataWare.AutoDB then
-                    writefile("SakataWare/autoload.json", game:GetService("HttpService"):JSONEncode(getgenv().SakataWare))
-                end
-                
-                xpcall(ServerHop, warn)
             end
-        end
-    end)
-
-    Threads[#Threads+1] = task.spawn(function()
-        while task.wait(1) do
-            if getgenv().SakataWare.AutoRebirth then
-                Wish()
-            end
-        end
-    end)
+        end)
+    end
+else
+    game:Shutdown()
 end
+
+local SettingsTab = library:AddTab("Settings"); 
+local SettingsColumn = SettingsTab:AddColumn(); 
+local SettingsColumn2 = SettingsTab:AddColumn(); 
+local SettingSection = SettingsColumn:AddSection("Menu"); 
+local ConfigSection = SettingsColumn2:AddSection("Configs");
+local Warning = library:AddWarning({type = "confirm"});
+
+SettingSection:AddBind({text = "Open / Close", flag = "UI Toggle", nomouse = true, key = "End", callback = function()
+    library:Close();
+end});
+
+SettingSection:AddButton({text = "Unload UI", callback = function()
+    local r, g, b = library.round(library.flags["Menu Accent Color"]);
+    Warning.text = "<font color='rgb(" .. r .. "," .. g .. "," .. b .. ")'>" .. 'Are you sure you wana unload the UI?' .. "</font>";
+    if Warning:Show() then
+    library:Unload()
+    end
+end});
+
+SettingSection:AddColor({text = "Accent Color", flag = "Menu Accent Color", color = Color3.fromRGB(88,133,198), callback = function(color)
+    if library.currentTab then
+        library.currentTab.button.TextColor3 = color;
+    end
+    for i,v in pairs(library.theme) do
+        v[(v.ClassName == "TextLabel" and "TextColor3") or (v.ClassName == "ImageLabel" and "ImageColor3") or "BackgroundColor3"] = color;
+    end
+end});
+
+local backgroundlist = {
+    Floral = "rbxassetid://5553946656",
+    Flowers = "rbxassetid://6071575925",
+    Circles = "rbxassetid://6071579801",
+    Hearts = "rbxassetid://6073763717"
+};
+
+local back = SettingSection:AddList({text = "Background", max = 4, flag = "background", values = {"Floral", "Flowers", "Circles", "Hearts"}, value = "Floral", callback = function(v)
+    if library.main then
+        library.main.Image = backgroundlist[v];
+    end
+end});
+
+back:AddColor({flag = "backgroundcolor", color = Color3.new(), callback = function(color)
+    if library.main then
+        library.main.ImageColor3 = Color or Color3.fromRGB(37,38,38)
+    end
+end, trans = 1, calltrans = function(trans)
+    if library.main then
+        library.main.ImageTransparency = 1 - trans;
+    end
+end});
+
+SettingSection:AddSlider({text = "Tile Size", min = 50, max = 500, value = 50, callback = function(size)
+    if library.main then
+        library.main.TileSize = UDim2.new(0, size, 0, size);
+    end
+end});
+
+SettingSection:AddButton({text = "Discord", callback = function()
+    local r, g, b = library.round(library.flags["Menu Accent Color"]);
+    Warning.text = "<font color='rgb(" .. r .. "," .. g .. "," .. b .. ")'>" .. 'Discord invite copied to clip board!' .. "</font>";
+    if Warning:Show() then
+    setclipboard('')
+    end
+end});
+
+local configFiles = {}
+
+ConfigSection:AddBox({text = "Config Name", skipflag = true});
+
+ConfigSection:AddList({text = "Configs", skipflag = true, value = "", flag = "Config List", values = library:GetConfigs()});
+
+ConfigSection:AddButton({text = "Create", callback = function()
+    library:GetConfigs();
+    writefile(library.foldername .. "/" .. library.flags["Config Name"] .. library.fileext, "{}");
+    library.options["Config List"]:AddValue(library.flags["Config Name"]);
+end});
+
+ConfigSection:AddButton({text = "Save", callback = function()
+    local r, g, b = library.round(library.flags["Menu Accent Color"]);
+    Warning.text = "Are you sure you want to save the current settings to config <font color='rgb(" .. r .. "," .. g .. "," .. b .. ")'>" .. library.flags["Config List"] .. "</font>?";
+    if Warning:Show() then
+        library:SaveConfig(library.flags["Config List"]);
+    end
+end});
+
+ConfigSection:AddButton({text = "Load", callback = function()
+    local r, g, b = library.round(library.flags["Menu Accent Color"]);
+    Warning.text = "Are you sure you want to load config <font color='rgb(" .. r .. "," .. g .. "," .. b .. ")'>" .. library.flags["Config List"] .. "</font>?";
+    if Warning:Show() then
+        library:LoadConfig(library.flags["Config List"]);
+    end
+end});
+
+ConfigSection:AddButton({text = "Delete", callback = function()
+    local r, g, b = library.round(library.flags["Menu Accent Color"]);
+    Warning.text = "Are you sure you want to delete config <font color='rgb(" .. r .. "," .. g .. "," .. b .. ")'>" .. library.flags["Config List"] .. "</font>?";
+    if Warning:Show() then
+        local config = library.flags["Config List"];
+        if table.find(library:GetConfigs(), config) and isfile(library.foldername .. "/" .. config .. library.fileext) then
+            library.options["Config List"]:RemoveValue(config);
+            delfile(library.foldername .. "/" .. config .. library.fileext);
+        end
+    end
+end});
+
+library:selectTab(library.tabs[1]);
+
+-- table.foreach(UiTable.AutoFarm, function(i,v) table.foreach(v, print) end)
