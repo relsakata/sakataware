@@ -1743,12 +1743,16 @@ function library:AddTab(title, pos)
                 local currLabel
 				if library.hasInit and self.hasInit then
 					currLabel = library.createLabel(option, self.content)
+					print(currLabel)
+					if type(currLabel) == "table" then
+						table.foreach(currLabel, print)
+					end
 				else
 					option.Init = library.createLabel
 				end
 
-                function option:Update(text)
-                    currLabel.main.Text = text
+                function option:Update(newtext)
+                    currLabel.main.Text = newtext
 					currLabel.main.Size = UDim2.new(1, -12, 0, textService:GetTextSize(currLabel.main.Text, 15, Enum.Font.Code, Vector2.new(currLabel.main.AbsoluteSize.X, 9e9)).Y + 6)
                 end
 
