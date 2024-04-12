@@ -1,2 +1,2 @@
 # sakataware
-no
+yes
