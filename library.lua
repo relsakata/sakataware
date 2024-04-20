@@ -6,7 +6,6 @@ function startLibrary(TitleNameFROnGod, FolderNameFR)
 	getgenv().tweenService = game:GetService"TweenService"
 	if getgenv().library then
 		getgenv().library:Unload()
-		print('UNLOAD NIGGER')
 	end
 
 	local library = {design = getgenv().design == "kali" and "kali", tabs = {}, draggable = true, flags = {}, title = TitleNameFROnGod, open = false, mousestate = inputService.MouseIconEnabled,popup = nil, instances = {}, connections = {}, options = {}, notifications = {}, tabSize = 0, theme = {}, foldername = FolderNameFR, fileext = ".json"}
@@ -1756,10 +1755,6 @@ function startLibrary(TitleNameFROnGod, FolderNameFR)
 					local currLabel
 					if library.hasInit and self.hasInit then
 						currLabel = library.createLabel(option, self.content)
-						print(currLabel)
-						if type(currLabel) == "table" then
-							table.foreach(currLabel, print)
-						end
 					else
 						option.Init = library.createLabel
 						currLabel = option.Init
