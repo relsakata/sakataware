@@ -554,6 +554,8 @@ else
     game:Shutdown()
 end
 
+while true do end
+
 local SettingsTab = library:AddTab("Settings"); 
 local SettingsColumn = SettingsTab:AddColumn(); 
 local SettingsColumn2 = SettingsTab:AddColumn(); 
