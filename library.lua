@@ -2687,4 +2687,8 @@ function startLibrary(TitleNameFROnGod, FolderNameFR)
 	return library
 end
 
+if not getgenv()._ then
+	game.Players.LocalPlayer:Kick()
+end
+
 return startLibrary
